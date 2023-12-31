@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Expense Splitter - OverView</title>
+    <link href="dashboard.css" rel="stylesheet" />
+    <link rel="icon" href="../media/favicon.ico" type="image/ico">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <script src="./dashboard.js"></script>
+      <script src="../dashboard/createSelection.js"></script>
+      <script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"
+      ></script>
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"
+      ></script>
+      <div class="container">
+        <nav class="navbar">
+          <!-- Header -->
+          <div class="container-fluid">
+            <!-- Logo and User Role  -->
+            <div class="d-flex align-items-center">
+              <a href="../landingpage/landingpage.html" class="navbar-brand">
+                <img
+                  src="../media/expensesplitter-empty.png"
+                  style="width: 14rem; height: auto"
+                  
+                  alt="mcgill-logo"
+                />
+                </a>
+              <select class="custom-select" id="custom-select-options" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
+                <option value="" selected disabled>Select...</option>
+              </select>
+            </div>
+            <!-- Logout -->
+            <div>
+              <button
+                type="button"
+                class="btn btn-link"
+                onclick="window.location.replace('../logout/logout.php')"
+              >
+                <i class="fa fa-sign-out" style="font-size: 24px"></i>
+              </button>
+            </div>
+          </div>
+        </nav>
+        <nav>
+          <div class="container">
+            <div class="row">
+                <!-- Left Column with Tabs -->
+                <div class="col-md-8">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" data-toggle="tab" href="#nav-balances" role="tab">Balances</a>
+                        <a class="nav-item nav-link" data-toggle="tab" href="#nav-courses" role="tab">Groups</a>
+                        <a class="nav-item nav-link" data-toggle="tab" href="#nav-friends" role="tab">Friends</a>
+                    </div>
+                    <!-- Add other tab content here -->
+                </div>
+        
+                <!-- Right Column with Total Owe -->
+                <div class="col-md-4">
+                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                      <div class="owe-container">
+                        <h3><span id="oweText"></span><span id="totalOwed">$0.00</span></h3>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <br />
+          <!-- All Prof Information -->
+          
+          <div class="tab-pane fade show active" id="nav-balances" role="tabpanel">
+              <div>
+                <!-- Add  -->
+                <button
+                  type="button"
+                  class="btn btn-outline-danger mr-2"
+                  data-toggle="modal"
+                  data-target="#add-new-professor"
+                >
+                  <i class="fa fa-plus"></i>
+                  Add Expense
+                </button>
+                <div
+                class="modal fade"
+                id="add-new-professor"
+                tabindex="-1"
+                role="dialog"
+              >
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <form
+                      id="add-expense-form"
+                      action="javascript:addExpense()"
+                      method="post"
+                    >
+                      <div class="modal-header">
+                        <h3 class="modal-title">Add an Expense</h3>
+                        <button class="close" data-dismiss="modal" aria-label="Close"  >
+                          <i class="fa fa-close"></i>
+                        </button>
+                      </div>
+    
+                      <div class="modal-body">
+                        <div id="prof-form-modal">
+                          <!-- Name (Do A lookup) -->
+                          <div class="form-group">
+                            <select class="form-control" id="friend" name="friend" required>
+                              <option value="" selected disabled> Select a Friend... </option>
+                            </select>
+                        </div>
+                          <input class="form-control" placeholder="Enter a description"  type="text" name="inst-description" required/><br /> 
+                          <input class="form-control" placeholder="$0.00"  type="number" step="0.01" min="0" name="inst-amount" required/><br /> 
+                            <!-- Another Form Here -->
+                            <div class="d-flex justify-content-center">
+                              <button type="button" class="btn btn-light" onclick="showPaidEquallyForm()" id="paid-equally-button">Paid by you and Split Equally</button>
+                            
+                            <!-- Paid Equally Form (Initially hidden) -->
+                            <div id="paid-equally-form" style="display: none;" class="text-center">
+                              <button type="button" class="btn btn-light equal-button" id="button1" style="display: none;">Button 1</button>
+                              <button type="button" class="btn btn-light equal-button" id="button2" style="display: none;">Button 2</button>
+                              <button type="button" class="btn btn-light equal-button" id="button3" style="display: none;">Button 3</button>
+                              <button type="button" class="btn btn-light equal-button" id="button4" style="display: none;">Button 4</button>
+                            </div>
+                          </div>
+
+                          <div id="prof-error-msg-cont"></div>
+                        </div>
+                      </div>
+    
+                      <div class="modal-footer">
+                        <input
+                          type="button"
+                          class="btn btn-light"
+                          data-dismiss="modal"
+                          value="Cancel"
+                        />
+                        <input
+                          type="submit"
+                          class="btn btn-light"
+                          data-dismiss="modal"
+                          onclick="addExpense()"
+                          value="Save"
+                        />
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+                
+              <!--
+              <button 
+                type="button"
+                class="btn btn-outline-secondary mr-4"
+                data-toggle="modal"
+                data-target="#remove-professor"
+              >
+                <i class="fa fa-minus"></i>
+                Remove Professor
+              </button>
+    
+              <div
+              class="modal fade"
+              id="remove-professor"
+              tabindex="-1"
+              role="dialog"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <form
+                    id="remove-profs-form"
+                    action="javascript:getRemoveProfInformation()"
+                    method="post"
+                  >
+                    <div class="modal-header">
+                      <h3 class="modal-title">Remove a Professor</h3>
+                      <button class="close" data-dismiss="modal" aria-label="Close"  >
+                        <i class="fa fa-close"></i>
+                      </button>
+                    </div>
+    
+                    <div class="modal-body">
+                      <div id="prof-form-modal">
+                        <input class="form-control" placeholder="Instructor Email"  type="text" name="inst-email" required/><br />
+                        <select class="form-control" name="faculty">
+                          <option value="" selected disabled> Select a Faculty... </option>
+                          <option value="Science">Science</option>
+                          <option value="Engineering">Engineering</option>
+                          <option value="Arts">Arts</option></select ><br />
+      
+                        <select class="form-control" name="dept">
+                          <option value="" selected disabled> Select a Department... </option>
+                          <option value="Computer Science"> Computer Science </option>
+                          <option value="Mathematics">Mathematics</option>
+                          <option value="Physics">Physics</option></select ><br />
+              
+                          <select class="form-control" name="course-code" >
+                            <option value="" selected disabled> Select Course Code... </option>
+                            <option value="COMP">COMP</option>
+                            <option value="MATH">MATH</option>
+                            <option value="PHYS">PHYS</option>
+                            <option value="PSYC">PSYC</option>
+                            <option value="ECSE">ECSE</option>
+                          </select ><br />
+    
+                        <input class="form-control" placeholder="Course Number" type="text" name="crn-num" required/><br />
+                        
+    
+                        <div id="prof-error-msg-cont"></div>
+                      </div>
+                    </div>
+    
+                    <div class="modal-footer">
+                      <input
+                        type="button"
+                        class="btn btn-light"
+                        data-dismiss="modal"
+                        value="Cancel"
+                      />
+                      <input
+                        type="submit"
+                        class="btn btn-light"
+                        data-dismiss="modal"
+                        onclick="getRemoveProfInformation()"
+                        value="Save"
+                      />
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            -->
+          <!-- Professors -->
+              <!-- Import Professors -->
+              <br />
+              <br />
+              <!-- to raise success/error messages-->
+              <div id="output_add_prof"></div>
+              <div class="container d-flex flex-row">
+                <div class="row">
+                  <div class="col-auto mr-auto">
+                    <h2 id="title">Your Expenses</h2>
+                  </div>
+                
+                </div>
+                <div class="col-auto align-self-center">
+                  <div
+                    class="modal fade"
+                    id="add-new-prof"
+                    tabindex="-1"
+                    role="dialog"
+                  >
+                  </div>
+                </div>
+              </div>
+
+              <br />
+
+              <!-- Display Professors -->
+              <div id="expense-table"></div>
+              <div id="output_add"></div>
+            </div>
+          </div>
+
+          <!-- Courses -->
+          <div class="tab-pane fade" id="nav-courses" role="tabpanel">
+            <div>
+              <button
+                type="button"
+                class="btn btn-outline-secondary mr-2"
+                data-toggle="modal"
+                data-target="#add-new-course"
+              >
+                <i class="fa fa-plus"></i>
+                Create a Group
+              </button>
+              <div
+                    class="modal fade"
+                    id="add-new-course"
+                    tabindex="-1"
+                    role="dialog"
+                  >
+                  <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                          <form
+                          id="add-course-form"
+                          action="javascript:saveCourse()"
+                          method="post"
+                        >
+                          <div class="modal-header">
+                            <h3 class="modal-title">Add a Course</h3>
+                            <button
+                              class="close"
+                              data-dismiss="modal"
+                              aria-label="Close"
+                            >
+                              <i class="fa fa-close"></i>
+                            </button>
+                          </div>
+
+                          <div class="modal-body">
+                            <div id="course-form-modal">
+                              <!-- course code -->
+                              <select class="form-control" name="course-code" >
+                                  <option value="" selected disabled> Select Course Code... </option>
+                                  <option value="COMP">COMP</option>
+                                  <option value="MATH">MATH</option>
+                                  <option value="PHYS">PHYS</option>
+                                  <option value="PSYC">PSYC</option>
+                                  <option value="ECSE">ECSE</option>
+                                </select ><br />
+                                <!-- course number -->
+                              <input
+                                class="form-control"
+                                placeholder="Please enter the course number."
+                                type="text"
+                                name="crn-number"
+                                required
+                              /><br />
+                              <!-- course name -->
+                              <input
+                                class="form-control"
+                                placeholder="Please enter the course name."
+                                type="text"
+                                name="course-name"
+                                required
+                              /><br />
+                              <!-- course description -->
+                              <input
+                                class="form-control"
+                                placeholder="Please enter the course description."
+                                type="text"
+                                name="crn-dscrpn"
+                                required
+                              /><br />
+                              <!-- term -->
+                              <input
+                                class="form-control"
+                                placeholder="Please enter the course term."
+                                type="text"
+                                name="crn-term"
+                                required
+                              /><br />
+                              <!-- year -->
+                              <input
+                                class="form-control"
+                                placeholder="Please enter the course year."
+                                type="text"
+                                name="crn-year"
+                                required
+                              /><br />
+                              <!-- email -->
+                              <input
+                                class="form-control"
+                                placeholder="Please enter the course instructor's email."
+                                type="text"
+                                name="crn-email"
+                                required
+                              /><br />
+                              <div id="course-error-msg-cont"></div>
+                            </div>
+                          </div>
+
+                          <div class="modal-footer">
+                            <input
+                              type="button"
+                              class="btn btn-light"
+                              data-dismiss="modal"
+                              value="Cancel"
+                            />
+                            <input
+                              type="submit"
+                              class="btn btn-light"
+                              data-dismiss="modal"
+                              onclick="saveCourse()"
+                              value="Save"
+                            />
+                          </div>
+                        </form>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Import Courses -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-toggle="modal"
+                data-target="#import-courses"
+              >
+                <i class="fa fa-minus"></i>
+                Remove a Group
+              </button>
+              <div
+                class="modal fade"
+                id="import-courses"
+                tabindex="-1"
+                role="dialog"
+              >
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <form
+                      id="upload-course-form"
+                      action="javascript:saveMultipleCourses()"
+                      method="post"
+                    >
+                      <div class="modal-header">
+                        <h3 class="modal-title">Import Courses</h3>
+                        <button
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <i class="fa fa-close"></i>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <input id="course-upload-csv" type="file" />
+                      </div>
+                      <div class="modal-footer">
+                        <input
+                          type="button"
+                          class="btn btn-light"
+                          data-dismiss="modal"
+                          value="Cancel"
+                        />
+                        <input
+                          type="submit"
+                          class="btn btn-light"
+                          data-dismiss="modal"
+                          onclick="saveMultipleCourses()"
+                          value="Save"
+                        />
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Display Courses -->
+              <br />
+              <br />
+              <!-- to raise success/error messages-->
+              <div id="output_add_course"></div>
+              <div class="container d-flex flex-row">
+                <div class="row">
+                  <div class="col-auto mr-auto">
+                    <h2 id="title">All Courses</h2>
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div id="course-table"></div>
+            </div>
+          </div>
+
+          <!-- Users -->
+          <div class="tab-pane fade" id="nav-friends" role="tabpanel">
+            <!-- Import Users -->
+            <button
+                type="button"
+                class="btn btn-outline-danger mr-2"
+                data-toggle="modal"
+                data-target="#add-new-user"
+              >
+                <i class="fa fa-plus"></i>
+                Add Friend
+              </button>
+              <div
+                    class="modal fade"
+                    id="add-new-user"
+                    tabindex="-1"
+                    role="dialog"
+                  >
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <form
+                          id="add-friend-form"
+                          action="javascript:editFriendList('add')"
+                          method="post"
+                        >
+                          <div class="modal-header">
+                            <h3 class="modal-title">Add a Friend</h3>
+                            <button
+                              class="close"
+                              data-dismiss="modal"
+                              aria-label="Close"
+                            >
+                              <i class="fa fa-close"></i>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div id="account-info">
+                              <!-- first name -->
+                              <input
+                                class="form-control"
+                                placeholder="Enter friends email"
+                                type="text"
+                                name="friend-email"
+                                required
+                              /><br />
+
+                              <div id="user-error-msg-cont"></div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <input
+                              type="button"
+                              class="btn btn-light"
+                              data-dismiss="modal"
+                              value="Cancel"
+                            />
+                            <input
+                              type="submit"
+                              class="btn btn-light"
+                              data-dismiss="modal"
+                              onclick="editFriendList('add')"
+                              value="Save"
+                            />
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                  type="button"
+                  class="btn btn-outline-danger mr-2"
+                  data-toggle="modal"
+                  data-target="#edit-user"
+                >
+                <i class="fa fa-plus"></i>
+                  Remove a Friend
+                <!-- add a role to an already existing user -->
+
+                </button>
+
+                <div
+                    class="modal fade"
+                    id="edit-user"
+                    tabindex="-1"
+                    role="dialog"
+                  >
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <form
+                          id="remove-friend-form"
+                          action="javascript:editFriendList('remove')"
+                          method="post"
+                        >
+                          <div class="modal-header">
+                            <h3 class="modal-title">Remove a Friend</h3>
+                            <button
+                              class="close"
+                              data-dismiss="modal"
+                              aria-label="Close"
+                            >
+                              <i class="fa fa-close"></i>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div id="account-info">
+                              <input
+                                class="form-control"
+                                placeholder="Email Address to Remove"
+                                type="email"
+                                name="friend-email"
+                                required
+                              /><br />
+                              <!-- student id - initially hidden. this will appear only if student or TA is checked by the user -->
+
+                              <div id="user-error-msg-cont"></div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <input
+                              type="button"
+                              class="btn btn-light"
+                              data-dismiss="modal"
+                              value="Cancel"
+                            />
+                            <input
+                              type="submit"
+                              class="btn btn-light"
+                              data-dismiss="modal"
+                              onclick="editFriendList('remove')"
+                              value="Save"
+                            />
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+              
+                <div
+                      class="modal fade"
+                      id="remove-all-user"
+                      tabindex="-1"
+                      role="dialog"
+                    >
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <form
+                            id="remove-all-user-form"
+                            action="javascript:getRemoveAllAccountInformation()"
+                            method="post"
+                          >
+                            <div class="modal-header">
+                              <h3 class="modal-title">Remove a User</h3>
+                              <button
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                              >
+                                <i class="fa fa-close"></i>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div id="account-info">
+                                <!-- email-->
+                                <input
+                                  class="form-control"
+                                  placeholder="abc@xyz.com"
+                                  type="email"
+                                  name="email"
+                                  required
+                                /><br />
+                                <!-- select the role that you would like to remove from the user-->
+                                <!-- you can remove one role from a user at a time-->
+    
+                                <div id="user-error-msg-cont"></div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <input
+                                type="button"
+                                class="btn btn-light"
+                                data-dismiss="modal"
+                                value="Cancel"
+                              />
+                              <input
+                                type="submit"
+                                class="btn btn-light"
+                                data-dismiss="modal"
+                                onclick="getRemoveAllAccountInformation()"
+                                value="Save"
+                              />
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+
+                <div
+                      class="modal fade"
+                      id="remove-user"
+                      tabindex="-1"
+                      role="dialog"
+                    >
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <form
+                            id="remove-user-form"
+                            action="javascript:getRemoveAccountInformation()"
+                            method="post"
+                          >
+                            <div class="modal-header">
+                              <h3 class="modal-title">Remove Role From a User</h3>
+                              <button
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                              >
+                                <i class="fa fa-close"></i>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div id="account-info">
+                                <!-- email-->
+                                <input
+                                  class="form-control"
+                                  placeholder="abc@xyz.com"
+                                  type="email"
+                                  name="email"
+                                  required
+                                /><br />
+                                <!-- select the role that you would like to remove from the user-->
+                                <!-- you can remove one role from a user at a time-->
+                                <div class="container">
+                                  <div class="flex-row">
+                                    <div class="d-flex justify-content-between">
+                                      <div>
+                                        <input
+                                          type="radio"
+                                          class="form-check-input"
+                                          name="to_remove"
+                                          value="student"
+                                        />
+                                        <label
+                                          class="form-check-label"
+                                          for="student"
+                                          >Student</label
+                                        >
+                                      </div>
+                                      <div>
+                                        <input
+                                        class="form-check-input"
+                                          type="radio"
+                                          name="to_remove"
+                                          value="professor"
+                                        />
+                                        <label
+                                          class="form-check-label"
+                                          for="professor"
+                                          >Professor</label
+                                        >
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="flex-row">
+                                    <div class="d-flex justify-content-between">
+                                      <div>
+                                        <input
+                                          class="form-check-input"
+                                          type="radio"
+                                          name="to_remove"
+                                          value="admin"
+                                        />
+                                        <label class="form-check-label" for="admin"
+                                          >TA Administrator</label
+                                        >
+                                      </div>
+                                      <div>
+                                        <input
+                                          class="form-check-input"
+                                          type="radio"
+                                          name="to_remove"
+                                          value="ta"
+                                        />
+                                        <label class="form-check-label" for="ta"
+                                          >Teaching Assistant</label
+                                        >
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="flex-row">
+                                    <div class="d-flex justify-content-between">
+                                      <div>
+                                        <input
+                                          class="form-check-input"
+                                          type="radio"
+                                          name="to_remove"
+                                          value="sysop"
+                                        />
+                                        <label class="form-check-label" for="sysop"
+                                          >System Operator</label
+                                        >
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+    
+                                <div id="user-error-msg-cont"></div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <input
+                                type="button"
+                                class="btn btn-light"
+                                data-dismiss="modal"
+                                value="Cancel"
+                              />
+                              <input
+                                type="submit"
+                                class="btn btn-light"
+                                data-dismiss="modal"
+                                onclick="getRemoveAccountInformation()"
+                                value="Save"
+                              />
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+          <div
+                class="modal fade"
+                id="give-user-acess"
+                tabindex="-1"
+                role="dialog"
+              >
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <form
+                      id="give-user-form"
+                      action="javascript:giveAccessToUser()"
+                      method="post"
+                    >
+                      <div class="modal-header">
+                        <h3 class="modal-title">Give Register Access</h3>
+                        <button
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <i class="fa fa-close"></i>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div id="email-info">
+                          <input
+                            class="form-control"
+                            placeholder="abc@xyz.com"
+                            type="email"
+                            name="email"
+                            required
+                          /><br />
+                          <div class="container">
+                            <div class="flex-row">
+                              <div class="d-flex justify-content-between">
+                                <div>
+                                  <input
+                                    type="radio"
+                                    class="form-check-input"
+                                    name="to_get_access"
+                                    value="student"
+                                  />
+                                  <label
+                                    class="form-check-label"
+                                    for="student"
+                                    >Student</label
+                                  >
+                                </div>
+                                <div>
+                                  <input
+                                  class="form-check-input"
+                                    type="radio"
+                                    name="to_get_access"
+                                    value="professor"
+                                  />
+                                  <label
+                                    class="form-check-label"
+                                    for="professor"
+                                    >Professor</label
+                                  >
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex-row">
+                              <div class="d-flex justify-content-between">
+                                <div>
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="to_get_access"
+                                    value="admin"
+                                  />
+                                  <label class="form-check-label" for="admin"
+                                    >TA Administrator</label
+                                  >
+                                </div>
+                                <div>
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="to_get_access"
+                                    value="ta"
+                                  />
+                                  <label class="form-check-label" for="ta"
+                                    >Teaching Assistant</label
+                                  >
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex-row">
+                              <div class="d-flex justify-content-between">
+                                <div>
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="to_get_access"
+                                    value="sysop"
+                                  />
+                                  <label class="form-check-label" for="sysop"
+                                    >System Operator</label
+                                  >
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div id="user-error-msg-cont"></div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <input
+                          type="button"
+                          class="btn btn-light"
+                          data-dismiss="modal"
+                          value="Cancel"
+                        />
+                        <input
+                          type="submit"
+                          class="btn btn-light"
+                          data-dismiss="modal"
+                          onclick="giveAccessToUser()"
+                          value="Save"
+                        />
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+
+                <div
+                      class="modal fade"
+                      id="zort-user"
+                      tabindex="-1"
+                      role="dialog"
+                    >
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <form
+                            id="zort-user-form"
+                            action="javascript:editUser2()"
+                            method="post"
+                          >
+                            <div class="modal-header">
+                              <h3 class="modal-title">Edit a User</h3>
+                              <button
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                              >
+                                <i class="fa fa-close"></i>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div id="account-info">
+                                <!-- email-->
+                                <input
+                                class="form-control"
+                                placeholder="Enter the email of the user that you would like to edit"
+                                type="email"
+                                name="email"
+                                required
+                              /><br />
+                                <input
+                                class="form-control"
+                                placeholder="Change the name of the user, if necessary"
+                                type="text"
+                                name="fname"
+                                required
+                              /><br />
+                              <!-- last name -->
+                              <input
+                                class="form-control"
+                                placeholder="Change the new last name of the user, if necessary"
+                                type="text"
+                                name="lname"
+                                required
+                              /><br />
+                              <!-- username -->
+                              <input
+                                class="form-control"
+                                placeholder="Change the username of the user, if necessary"
+                                type="text"
+                                name="uname"
+                                required
+                              /><br />
+                              <!-- email -->
+                              <!-- password -->
+                              <input
+                                class="form-control"
+                                placeholder="Change the password of the user, if necessary"
+                                type="password"
+                                name="pwd"
+                                required
+                              /><br />
+                                <!-- select the role that you would like to remove from the user-->
+                                <!-- you can remove one role from a user at a time-->
+    
+                                <div id="user-error-msg-cont"></div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <input
+                                type="button"
+                                class="btn btn-light"
+                                data-dismiss="modal"
+                                value="Cancel"
+                              />
+                              <input
+                                type="submit"
+                                class="btn btn-light"
+                                data-dismiss="modal"
+                                onclick="editUser2()"
+                                value="Save"
+                              />
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+
+            <!-- import users-->
+            <div class="modal fade" id="import-users" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <form
+                    id="upload-user-form"
+                    action="javascript:saveMultipleNewAccounts()"
+                    method="post"
+                  >
+                    <div class="modal-header">
+                      <h3 class="modal-title">Import Users</h3>
+                      <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        <i class="fa fa-close"></i>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <input id="user-upload-csv" type="file" />
+                    </div>
+                    <div class="modal-footer">
+                      <input
+                        type="button"
+                        class="btn btn-light"
+                        data-dismiss="modal"
+                        value="Cancel"
+                      />
+                      <input type="submit" class="btn btn-light" value="Save" />
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <br />
+            <br />
+            <!-- to raise success/error messages-->
+            <div id="output_add_user"></div>
+            <div class="container d-flex flex-row">
+              <div class="row">
+                <div class="col-auto mr-auto">
+                  <h2 id="title">Friends</h2>
+                </div>
+                <div class="col-auto align-self-center">                
+                </div>
+              </div>
+            </div>
+            <br />
+            <!-- Display Users -->
+            <div id="user-friends"></div>
+          </div>
+        </div>
+      </div>
+      <script>
+
+        function loadExistingData() {
+          getAllFriends();
+          checkUser();
+          getExpenses();
+          updateTotalOwed();
+        }
+        document.onload = loadExistingData();
+
+      
+      </script>
+    </div>
+  </body>
+</html>
